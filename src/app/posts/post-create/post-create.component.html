@@ -1,0 +1,31 @@
+<mat-card>
+  <form (submit)="onAddPost(postForm)" #postForm="ngForm">
+    <mat-form-field>
+      <input
+        matInput
+        type="text"
+        name="title"
+        ngModel
+        required
+        minlength="3"
+        placeholder="Titre"
+        #title="ngModel">
+      <mat-error *ngIf="title.invalid">Il manque un titre à l'article</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <textarea
+        matInput rows="4"
+        name="content"
+        ngModel
+        required
+        placeholder="Contenu"
+        #content="ngModel"></textarea>
+      <mat-error *ngIf="content.invalid">Il manque du contenu à l'article</mat-error>
+    </mat-form-field>
+    <button
+      mat-raised-button
+      color="accent"
+      type="submit">Ajouter un Post
+    </button>
+  </form>
+</mat-card>
