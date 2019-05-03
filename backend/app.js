@@ -1,10 +1,21 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require('mongoose');
+
+const Post = require("./models/post");
 
 const app = express();
 
+mongoose.connect("mongodb+srv://max:cd6u4oybIOLW35dT@cluster0-jubhq.mongodb.net/node-angular?retryWrites=true", { useNewUrlParser: true })
+  .then(() => {
+    console.log('Connected to database!');
+  })
+  .catch(() => {
+    console.log()
+  });
+
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false}));
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -21,31 +32,35 @@ app.use((req, res, next) => {
 
 // Fetch un Post reçue en POST
 app.post("/api/posts", (req, res, next) => {
-  const post = req.body;
-  console.log(post);
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content
+  });
+  // requête INSERT de post, nouvel enregistrement: 'Document'
+  post.save();
   res.status(201).json({
     message: 'Post added successfully'
   });
 });
 
 // Fetch une liste de Posts en GET
-app.get("/api/posts",(req, res, next) => {
-  const posts = [
-    {
-      id: "fad45616",
-      title: "First server-side post",
-      content: "This is coming from the server"
-    },
-    {
-      id: "dfg5468",
-      title: "Second server-side post",
-      content: "This is coming from the server!"
-    }
-  ];
-  res.status(200).json({
-    message: 'Posts fetched successfully!',
-    posts: posts
+app.get("/api/posts", (req, res, next) => {
+  Post.find().then(documents => {
+    res.status(200).json({
+      message: 'Posts fetched successfully!',
+      posts: documents
+    });
   });
+});
+
+
+// Delete un Post en DELETE
+app.delete("/api/posts/:id", (req, res, next) => {
+  Post.deleteOne({_id: req.params.id}).then(result => {
+    console.log(result);
+    res.status(200).json({ message: "Post deleted!"});
+  });
+
 });
 
 module.exports = app;
