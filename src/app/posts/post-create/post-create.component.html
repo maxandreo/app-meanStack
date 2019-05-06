@@ -1,31 +1,40 @@
 <mat-card>
-  <form (submit)="onAddPost(postForm)" #postForm="ngForm">
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <form [formGroup]="form" (submit)="onSavePost()" *ngIf="!isLoading">
     <mat-form-field>
       <input
         matInput
         type="text"
-        name="title"
-        ngModel
-        required
-        minlength="3"
-        placeholder="Titre"
-        #title="ngModel">
-      <mat-error *ngIf="title.invalid">Il manque un titre à l'article</mat-error>
+        formControlName="title"
+        placeholder="Titre">
+      <mat-error *ngIf="form.get('title').invalid">Il manque un titre à l'article</mat-error>
     </mat-form-field>
+    <div>
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="filePicker.click()">Pick image</button>
+      <input
+        #filePicker
+        type="file"
+        (change)="onImagePicked($event)">
+    </div>
+    <div class="image-preview"
+         *ngIf="imagePreview !== '' && imagePreview && form.get('image').valid">
+      <img [src]="imagePreview" [alt]="form.value.title">
+    </div>
     <mat-form-field>
       <textarea
-        matInput rows="4"
-        name="content"
-        ngModel
-        required
-        placeholder="Contenu"
-        #content="ngModel"></textarea>
-      <mat-error *ngIf="content.invalid">Il manque du contenu à l'article</mat-error>
+        matInput
+        rows="4"
+        formControlName="content"
+        placeholder="Contenu"></textarea>
+      <mat-error *ngIf="form.get('content').invalid">Il manque du contenu à l'article</mat-error>
     </mat-form-field>
     <button
       mat-raised-button
       color="accent"
-      type="submit">Ajouter un Post
+      type="submit">Save Post
     </button>
   </form>
 </mat-card>
