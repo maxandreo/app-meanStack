@@ -88,10 +88,28 @@ router.put(
 
 // Fetch une liste de Posts en GET
 router.get("", (req, res, next) => {
-  Post.find().then(documents => {
+  // console.log(req.query);
+  // Pagination
+  const pageSize = +req.query.pagesize; // convertir la string en number avec +
+  const currentPage = +req.query.page;
+  const postQuery = Post.find();
+  let fetchedPosts;
+  if (pageSize && currentPage) {
+    postQuery
+      // on récupère le first n post
+      .skip(pageSize * (currentPage - 1))
+      // nombre de documents à récupérer
+      .limit(pageSize);
+  }
+  postQuery.then(documents => {
+    fetchedPosts = documents;
+    // Retourner le nombre de posts
+    return Post.countDocuments();
+  }).then(count => {
     res.status(200).json({
       message: 'Posts fetched successfully!',
-      posts: documents
+      posts: fetchedPosts,
+      maxPosts: count
     });
   });
 });
