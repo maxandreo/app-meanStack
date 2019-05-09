@@ -4,6 +4,7 @@ import {PageEvent} from '@angular/material';
 
 import { Post } from '../post.model';
 import {PostsService} from '../posts.service';
+import {AuthService} from '../../auth/auth.service';
 
 
 @Component({
@@ -25,8 +26,13 @@ export class PostListComponent implements OnInit, OnDestroy {
   currentPage = 1;
   pageSizeOptions = [1, 2, 5, 10];
   private postsSub: Subscription;
+  // Authentication
+  userIsAuthenticated = false;
+  private authStatusSub: Subscription;
 
-  constructor(public postsService: PostsService) {}
+
+  constructor(public postsService: PostsService,
+              private authService: AuthService) {}
 
   ngOnInit() {
     // Add a load spinner
@@ -39,6 +45,13 @@ export class PostListComponent implements OnInit, OnDestroy {
         this.totalPosts = postData.postCount;
         this.posts = postData.posts;
       });
+    this.userIsAuthenticated = this.authService.getIsAuth();
+    this.authStatusSub =
+      this.authService
+          .getAuthStatusListener()
+          .subscribe(isAuthenticated => {
+            this.userIsAuthenticated = isAuthenticated;
+          });
   }
 
   onChangedPage(pageData: PageEvent) {
@@ -58,5 +71,6 @@ export class PostListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.postsSub.unsubscribe();
+    this.authStatusSub.unsubscribe();
   }
 }
