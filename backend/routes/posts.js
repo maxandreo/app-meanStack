@@ -46,7 +46,7 @@ router.post(
     title: req.body.title,
     content: req.body.content,
     // store the image path
-    imagePath: url + "/images/" + req.file.filename
+    imagePath: req.file ? (url + "/images/" +  req.file.filename) : ''
   });
   // requête INSERT de post, nouvel enregistrement (ou 'Document')
   // de post crée plus haut

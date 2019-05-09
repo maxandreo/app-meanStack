@@ -4,7 +4,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {PostsService} from '../posts.service';
 import {ActivatedRoute, ParamMap} from '@angular/router';
 import {Post} from '../post.model';
-import { mimeType } from './mime-type.validator';
+import {mimeType} from './mime-type.validator';
 
 
 @Component({
@@ -37,9 +37,7 @@ export class PostCreateComponent implements OnInit {
         }),
       content: new FormControl(null,
         {validators: [Validators.required]}),
-      image: new FormControl(null,
-        {validators: [Validators.required],
-          asyncValidators: [mimeType]})
+      image: new FormControl(null, { asyncValidators: [mimeType]})
     });
     // Prépeupler le form si l'on EDIT un post
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
@@ -64,6 +62,7 @@ export class PostCreateComponent implements OnInit {
             content: this.post.content,
             image: this.post.imagePath
           });
+          this.imagePreview = this.post.imagePath;
         });
       } else {
         this.mode = 'create';
@@ -84,8 +83,8 @@ export class PostCreateComponent implements OnInit {
     // Créer URL de l'img, la preview de l'img
     const reader = new FileReader();
     reader.onload = () => {
-      // @ts-ignore
-      this.imagePreview = reader.result;
+
+      this.imagePreview = reader.result as string;
     };
     reader.readAsDataURL(file);
   }
@@ -109,6 +108,7 @@ export class PostCreateComponent implements OnInit {
         this.form.value.content,
         this.form.value.image
       );
+      console.log(this.form.value.image);
     }
     this.form.reset();
   }
