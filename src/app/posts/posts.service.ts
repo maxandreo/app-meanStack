@@ -29,7 +29,8 @@ export class PostsService {
                   title: post.title,
                   content: post.content,
                   id: post._id,
-                  imagePath: post.imagePath
+                  imagePath: post.imagePath,
+                  creator: post.creator
                 };
               }),
               maxPosts: postData.maxPosts
@@ -37,11 +38,12 @@ export class PostsService {
           })
         )
         .subscribe((transformedPostData) => {
+          // console.log(transformedPostData);
           this.posts = transformedPostData.posts;
           this.postsUpdated.next({
-              posts: [...this.posts],
-              postCount: transformedPostData.maxPosts
-            });
+            posts: [...this.posts],
+            postCount: transformedPostData.maxPosts
+          });
         });
   }
 
@@ -51,10 +53,13 @@ export class PostsService {
 
   // Fetch a single Post, peupler post-create.component
   getPost(id: string) {
-    return this.http
-               .get<{ _id: string, title: string, content: string, imagePath: string }>(
-                 'http://localhost:3000/api/posts/' + id
-               );
+    return this.http.get<{
+      _id: string,
+      title: string,
+      content: string,
+      imagePath: string,
+      creator: string
+    }>('http://localhost:3000/api/posts/' + id);
   }
 
   // Add Post
@@ -98,7 +103,8 @@ export class PostsService {
         id: id,
         title: title,
         content: content,
-        imagePath: ''
+        imagePath: '',
+        creator: null
       };
     }
     this.http
@@ -127,10 +133,10 @@ export class PostsService {
   deletePost(postId: string) {
     return this.http
                .delete('http://localhost:3000/api/posts/' + postId);
-        // .subscribe(() => {
-        //   const updatedPosts = this.posts.filter(post => post.id !== postId);
-        //   this.posts = updatedPosts;
-        //   this.postsUpdated.next([...this.posts]);
-        // });
+    // .subscribe(() => {
+    //   const updatedPosts = this.posts.filter(post => post.id !== postId);
+    //   this.posts = updatedPosts;
+    //   this.postsUpdated.next([...this.posts]);
+    // });
   }
 }

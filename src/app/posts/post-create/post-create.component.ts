@@ -54,7 +54,8 @@ export class PostCreateComponent implements OnInit {
             id: postData._id,
             title: postData.title,
             content: postData.content,
-            imagePath: postData.imagePath
+            imagePath: postData.imagePath,
+            creator: postData.creator
           };
           // Iniatialize toutes les value du form si on a un post à EDITER
           this.form.setValue({
@@ -108,7 +109,6 @@ export class PostCreateComponent implements OnInit {
         this.form.value.content,
         this.form.value.image
       );
-      console.log(this.form.value.image);
     }
     this.form.reset();
   }
