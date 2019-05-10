@@ -10,7 +10,13 @@ const app = express();
 
 mongoose.set('useCreateIndex', true);
 
-mongoose.connect("mongodb+srv://max:cd6u4oybIOLW35dT@cluster0-jubhq.mongodb.net/node-angular", { useNewUrlParser: true })
+mongoose
+  .connect(
+    "mongodb+srv://max:" +
+    process.env.MONGO_ATLAS_PW +
+    "@cluster0-jubhq.mongodb.net/node-angular",
+    {useNewUrlParser: true}
+  )
   .then(() => {
     console.log('Connected to database!');
   })
@@ -33,7 +39,6 @@ app.use((req, res, next) => {
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PATCH, PUT, DELETE, OPTIONS",
-
   );
   next();
 });
