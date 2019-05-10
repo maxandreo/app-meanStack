@@ -26,7 +26,7 @@ router.post("/signup", (req, res, next) => {
         })
         .catch(err => {
           res.status(500).json({
-            error: err
+            message: "Informations d'authentification non valides"
           });
         });
     });
@@ -56,7 +56,10 @@ router.post("/login", (req, res, next) => {
       }
       // Ici Valid password, Créer le JSON Web Token
       const token = jwt.sign(
-        {email: fetchedUser.email, userId: fetchedUser._id},
+        {
+          email: fetchedUser.email,
+          userId: fetchedUser._id
+        },
         'secret_this_should_be_longer',
         {expiresIn: "1h"}
       );
@@ -70,7 +73,7 @@ router.post("/login", (req, res, next) => {
     .catch(err => {
       // console.log(err);
       return res.status(401).json({
-        message: 'Auth failed'
+        message: "Informations d'authentification non valides"
       });
     });
 });

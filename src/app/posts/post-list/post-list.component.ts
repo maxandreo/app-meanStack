@@ -1,8 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { Subscription } from 'rxjs';
+import {Subscription} from 'rxjs';
 import {PageEvent} from '@angular/material';
 
-import { Post } from '../post.model';
+import {Post} from '../post.model';
 import {PostsService} from '../posts.service';
 import {AuthService} from '../../auth/auth.service';
 
@@ -31,8 +31,11 @@ export class PostListComponent implements OnInit, OnDestroy {
   private authStatusSub: Subscription;
 
 
-  constructor(public postsService: PostsService,
-              private authService: AuthService) {}
+  constructor(
+    public postsService: PostsService,
+    private authService: AuthService
+  ) {
+  }
 
   ngOnInit() {
     // Add a load spinner
@@ -40,12 +43,12 @@ export class PostListComponent implements OnInit, OnDestroy {
     this.postsService.getPosts(this.postsPerPage, this.currentPage);
     this.userId = this.authService.getUserId();
     this.postsSub = this.postsService.getPostUpdateListener()
-      .subscribe((postData: { posts: Post[], postCount: number }) => {
-        // Remove a load spinner
-        this.isLoading = false;
-        this.totalPosts = postData.postCount;
-        this.posts = postData.posts;
-      });
+                        .subscribe((postData: { posts: Post[], postCount: number }) => {
+                          // Remove a load spinner
+                          this.isLoading = false;
+                          this.totalPosts = postData.postCount;
+                          this.posts = postData.posts;
+                        });
     this.userIsAuthenticated = this.authService.getIsAuth();
     this.authStatusSub =
       this.authService
@@ -66,9 +69,12 @@ export class PostListComponent implements OnInit, OnDestroy {
 
   onDelete(postId: string) {
     this.isLoading = true;
-    this.postsService.deletePost(postId).subscribe(() => {
-      this.postsService.getPosts(this.postsPerPage, this.currentPage);
-    });
+    this.postsService.deletePost(postId)
+        .subscribe(() => {
+          this.postsService.getPosts(this.postsPerPage, this.currentPage);
+        }, () => {
+          this.isLoading = false;
+        });
   }
 
   ngOnDestroy() {

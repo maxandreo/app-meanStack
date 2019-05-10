@@ -1,10 +1,12 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 import {PostsService} from '../posts.service';
 import {ActivatedRoute, ParamMap} from '@angular/router';
 import {Post} from '../post.model';
 import {mimeType} from './mime-type.validator';
+import {Subscription} from 'rxjs';
+import {AuthService} from '../../auth/auth.service';
 
 
 @Component({
@@ -12,7 +14,7 @@ import {mimeType} from './mime-type.validator';
   templateUrl: './post-create.component.html',
   styleUrls: ['./post-create.component.css']
 })
-export class PostCreateComponent implements OnInit {
+export class PostCreateComponent implements OnInit, OnDestroy {
   post: Post;
   isLoading = false;
   // ReactiveForm
@@ -20,16 +22,22 @@ export class PostCreateComponent implements OnInit {
   imagePreview: string;
   private mode = 'create';
   private postId: string;
+  private authStatusSub: Subscription;
 
 
   constructor(
     public postsService: PostsService,
-    public route: ActivatedRoute
-  ) {
-  }
+    public route: ActivatedRoute,
+    public authService: AuthService
+  ) {}
 
   // Différencier si l'on CREATE un Post ou si l'on EDIT un Post
   ngOnInit() {
+    this.authStatusSub = this.authService
+                             .getAuthStatusListener()
+                             .subscribe(authStatus => {
+                               this.isLoading = false;
+                             });
     this.form = new FormGroup({
       title: new FormControl(null,
         {
@@ -113,5 +121,7 @@ export class PostCreateComponent implements OnInit {
     this.form.reset();
   }
 
-
+  ngOnDestroy(): void {
+    this.authStatusSub.unsubscribe();
+  }
 }
